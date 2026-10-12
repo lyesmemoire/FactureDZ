@@ -257,8 +257,16 @@ table.data .mono { font-family: Consolas, "SF Mono", Menlo, monospace; font-size
 .a4-sheet {
   width: 794px; min-height: 1123px; margin: 0 auto; background: #fff;
   box-shadow: 0 4px 24px rgba(15, 23, 42, .18);
-  padding: 42px 46px; position: relative; color: #111827; font-size: 12px;
+  padding: 42px 46px 64px; position: relative; color: #111827; font-size: 12px;
+  /* Colonne : en-tête en haut, zone des articles centrée dans l'espace libre, totaux et pied en bas. */
+  display: flex; flex-direction: column;
 }
+.a4-sheet > * { flex-shrink: 0; }
+.a4-sheet > .watermark { position: absolute; }
+/* Zone des articles : prend tout l'espace disponible et centre le tableau verticalement.
+   Peu d'articles → tableau au milieu de la page ; beaucoup d'articles → la zone s'agrandit. */
+.lines-zone { flex: 1 0 auto; display: flex; flex-direction: column; justify-content: center; margin: 14px 0; }
+.lines-zone table.invoice-lines { margin-top: 0; }
 .a4-sheet h1 { font-size: 19px; letter-spacing: .04em; }
 .doc-header { display: flex; justify-content: space-between; gap: 24px; margin-bottom: 10px; }
 .doc-header .logo { max-height: 64px; max-width: 180px; object-fit: contain; }
@@ -380,6 +388,7 @@ table.invoice-lines .fee-line td { background: #f8fafc; font-style: italic; }
      Le rembourrage écran (42 px) est supprimé à l'impression : la marge est celle de @page seule. */
   .print-sheet .a4-sheet {
     box-shadow: none; margin: 0; width: auto; min-height: 281mm; padding: 0 0 24mm 0;
+    display: flex; flex-direction: column;
   }
   .print-sheet .a4-legal-footer { bottom: 0; left: 0; right: 0; }
   /* Plusieurs exemplaires : chacun commence une nouvelle page A4. */

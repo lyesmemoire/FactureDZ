@@ -136,58 +136,60 @@ export function InvoiceA4({
         </div>
       )}
 
-      {/* ---------------- LIGNES ---------------- */}
-      <table className="invoice-lines">
-        <thead>
-          <tr>
-            <th style={{ width: 26 }}>N°</th>
-            <th style={{ width: 80 }}>Référence</th>
-            <th>Désignation</th>
-            <th className="num" style={{ width: 52 }}>Qté</th>
-            <th style={{ width: 52 }}>Unité</th>
-            <th className="num" style={{ width: 86 }}>PU HT</th>
-            <th className="num" style={{ width: 56 }}>Remise</th>
-            <th className="num" style={{ width: 56 }}>TVA</th>
-            <th className="num" style={{ width: 90 }}>Total HT</th>
-          </tr>
-        </thead>
-        <tbody>
-          {comp.lines.map((l, i) => (
-            <tr key={l.id} className={l.nature === "FRAIS" ? "fee-line" : undefined}>
-              <td>{i + 1}</td>
-              <td className="mono">{l.productRef ?? "—"}</td>
-              <td>
-                <b>{l.designation}</b>
-                {l.description && (
-                  <>
-                    <br />
-                    <span style={{ color: "#6b7280" }}>{l.description}</span>
-                  </>
-                )}
-                {l.taxRatePctSnapshot === 0 && l.motifExoneration && (
-                  <>
-                    <br />
-                    <span style={{ color: "#6b7280" }}>Exonération : {l.motifExoneration}</span>
-                  </>
-                )}
-              </td>
-              <td className="num">{l.qty}</td>
-              <td>{l.unite}</td>
-              <td className="num">{formatDA(l.puHtCents, doc.devise)}</td>
-              <td className="num">{l.remisePct ? `${l.remisePct} %` : "—"}</td>
-              <td className="num">{l.taxRatePctSnapshot} %</td>
-              <td className="num">{formatDA(comp.finalLineHtCents[i], doc.devise)}</td>
-            </tr>
-          ))}
-          {comp.lines.length === 0 && (
+      {/* ---------------- LIGNES (zone centrée verticalement entre en-tête et totaux) ---------------- */}
+      <div className="lines-zone">
+        <table className="invoice-lines">
+          <thead>
             <tr>
-              <td colSpan={9} style={{ textAlign: "center", color: "#9ca3af", padding: 18 }}>
-                Aucune ligne
-              </td>
+              <th style={{ width: 26 }}>N°</th>
+              <th style={{ width: 80 }}>Référence</th>
+              <th>Désignation</th>
+              <th className="num" style={{ width: 52 }}>Qté</th>
+              <th style={{ width: 52 }}>Unité</th>
+              <th className="num" style={{ width: 86 }}>PU HT</th>
+              <th className="num" style={{ width: 56 }}>Remise</th>
+              <th className="num" style={{ width: 56 }}>TVA</th>
+              <th className="num" style={{ width: 90 }}>Total HT</th>
             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {comp.lines.map((l, i) => (
+              <tr key={l.id} className={l.nature === "FRAIS" ? "fee-line" : undefined}>
+                <td>{i + 1}</td>
+                <td className="mono">{l.productRef ?? "—"}</td>
+                <td>
+                  <b>{l.designation}</b>
+                  {l.description && (
+                    <>
+                      <br />
+                      <span style={{ color: "#6b7280" }}>{l.description}</span>
+                    </>
+                  )}
+                  {l.taxRatePctSnapshot === 0 && l.motifExoneration && (
+                    <>
+                      <br />
+                      <span style={{ color: "#6b7280" }}>Exonération : {l.motifExoneration}</span>
+                    </>
+                  )}
+                </td>
+                <td className="num">{l.qty}</td>
+                <td>{l.unite}</td>
+                <td className="num">{formatDA(l.puHtCents, doc.devise)}</td>
+                <td className="num">{l.remisePct ? `${l.remisePct} %` : "—"}</td>
+                <td className="num">{l.taxRatePctSnapshot} %</td>
+                <td className="num">{formatDA(comp.finalLineHtCents[i], doc.devise)}</td>
+              </tr>
+            ))}
+            {comp.lines.length === 0 && (
+              <tr>
+                <td colSpan={9} style={{ textAlign: "center", color: "#9ca3af", padding: 18 }}>
+                  Aucune ligne
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
 
       {/* ---------------- TOTAUX ---------------- */}
       <div className="totals-zone">
