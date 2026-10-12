@@ -1,0 +1,18 @@
+{
+  "_commentaire": "Matrice des droits (§35). Source UNIQUE : lue par le Rust (src-tauri/src/permissions.rs) et par l'interface (src/core/permissions.ts). Ne jamais dupliquer ces règles ailleurs.",
+  "roles": ["ADMIN", "GESTIONNAIRE", "COMPTABLE", "VENDEUR", "LECTEUR"],
+  "actions": {
+    "config.manage":      ["ADMIN"],
+    "users.manage":       ["ADMIN"],
+    "backup.restore":     ["ADMIN"],
+    "backup.create":      ["ADMIN", "GESTIONNAIRE", "COMPTABLE"],
+    "export.data":        ["ADMIN", "COMPTABLE"],
+    "catalog.write":      ["ADMIN", "GESTIONNAIRE", "VENDEUR"],
+    "document.write":     ["ADMIN", "GESTIONNAIRE", "VENDEUR"],
+    "document.validate":  ["ADMIN", "GESTIONNAIRE", "VENDEUR"],
+    "document.cancel":    ["ADMIN", "GESTIONNAIRE", "COMPTABLE"],
+    "payment.write":      ["ADMIN", "GESTIONNAIRE", "COMPTABLE"],
+    "purchase.write":     ["ADMIN", "GESTIONNAIRE", "COMPTABLE"],
+    "audit.write":        ["ADMIN", "GESTIONNAIRE", "COMPTABLE", "VENDEUR", "LECTEUR"]
+  }
+}

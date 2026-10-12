@@ -1,0 +1,76 @@
+# Build de l'installateur Windows FacturationDZ-Setup.exe (§53, §79).
+# L'installateur canonique (toolchain MSVC + NSIS) se construit sur un runner
+# Windows : les livrables produits ici sont signables et diffusables tels quels.
+# Déclencheurs : push d'un tag v* (release) ou lancement manuel (workflow_dispatch).
+
+name: Build installateur Windows
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Rust stable (MSVC)
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-pc-windows-msvc
+
+      - name: Cache Rust (src-tauri)
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      - name: Dépendances npm
+        run: npm ci
+
+      - name: Tests frontend (§66)
+        run: npm test
+
+      - name: Tests backend Rust (§64, §66)
+        working-directory: src-tauri
+        run: cargo test
+
+      - name: Test de charge (§50) — 100 000 documents
+        run: npm run loadtest
+
+      - name: Build installateurs (Tauri : NSIS .exe + WiX .msi, interface française)
+        run: npx tauri build --bundles nsis,msi
+
+      - name: Renommer les installateurs + empreintes SHA-256
+        shell: pwsh
+        run: |
+          $exe = Get-ChildItem src-tauri/target/release/bundle/nsis/*.exe | Select-Object -First 1
+          $msi = Get-ChildItem src-tauri/target/release/bundle/msi/*.msi | Select-Object -First 1
+          if (-not $exe) { throw "Aucun installateur .exe (NSIS) produit." }
+          if (-not $msi) { throw "Aucun installateur .msi (WiX) produit." }
+          New-Item -ItemType Directory -Force -Path artifacts | Out-Null
+          Copy-Item $exe.FullName "artifacts/FacturationDZ-Setup.exe"
+          Copy-Item $msi.FullName "artifacts/FacturationDZ.msi"
+          $h1 = (Get-FileHash "artifacts/FacturationDZ-Setup.exe" -Algorithm SHA256).Hash
+          $h2 = (Get-FileHash "artifacts/FacturationDZ.msi" -Algorithm SHA256).Hash
+          @("$h1  FacturationDZ-Setup.exe", "$h2  FacturationDZ.msi") | Set-Content "artifacts/SHA256SUMS.txt" -Encoding ASCII
+          Write-Host "SHA-256 .exe : $h1"
+          Write-Host "SHA-256 .msi : $h2"
+
+      - name: Publier l'installateur
+        uses: actions/upload-artifact@v4
+        with:
+          name: FacturationDZ-Setup
+          if-no-files-found: error
+          path: |
+            artifacts/FacturationDZ-Setup.exe
+            artifacts/FacturationDZ.msi
+            artifacts/SHA256SUMS.txt

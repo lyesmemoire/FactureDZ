@@ -1,0 +1,49 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "FacturationDZ",
+  "mainBinaryName": "FacturationDZ",
+  "version": "1.0.0",
+  "identifier": "dz.facturation.facturationdz",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://127.0.0.1:5173",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "FacturationDZ — Facturation professionnelle hors ligne",
+        "width": 1440,
+        "height": 900,
+        "minWidth": 1100,
+        "minHeight": 700,
+        "resizable": true,
+        "center": true
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: asset: http://asset.localhost; script-src 'self'"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["nsis", "msi"],
+    "category": "Business",
+    "shortDescription": "Facturation professionnelle 100 % hors ligne pour entreprises algériennes",
+    "longDescription": "FacturationDZ : factures, devis, proforma, bons de livraison, avoirs, paiements, TVA configurable, montants en lettres, PDF, sauvegardes locales. Fonctionne sans connexion Internet, toutes les données restent sur votre PC.",
+    "icon": ["icons/icon.ico", "icons/icon.png"],
+    "resources": ["resources/fonts/*"],
+    "windows": {
+      "nsis": {
+        "installMode": "both",
+        "languages": ["French"],
+        "compression": "lzma",
+        "installerHooks": "installer-hooks.nsh"
+      },
+      "wix": {
+        "language": "fr-FR"
+      }
+    }
+  }
+}
